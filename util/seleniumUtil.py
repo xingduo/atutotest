@@ -1,5 +1,5 @@
 #!/usr/bin/python
-#coding:utf-8
+# coding:utf-8
 
 """
 @author: 留仙洞
@@ -8,3 +8,8 @@
 @file: seleniumUtil.py
 @time: 2018/8/3 23:35
 """
+import pymysql
+import configparser
+from util.selectBrowser import SelectBrowser
+
+# class SeleniumUtil:
