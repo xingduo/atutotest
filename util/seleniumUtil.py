@@ -8,8 +8,8 @@
 @file: seleniumUtil.py
 @time: 2018/8/3 23:35
 """
-import pymysql
-import configparser
+
+
 from util.selectBrowser import SelectBrowser
 
 # class SeleniumUtil:
