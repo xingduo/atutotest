@@ -52,15 +52,25 @@ class SuperAction:
             logging.info('获取用例' + case_name + '的名字')
             # 获取单元格数量
             ncols = table.ncols
+            nrows = table.nrows
             row_values = table.row_values(0)
-            print(row_values)
-            for i in row_values:
-                if i == '动作':
-                    print(i)
-                
 
+            print(row_values)
+            for i in range(ncols):
+                if row_values[i] == '动作':
+                    action_column_index = i
+                    print(action_column_index)
+                elif row_values[i] == '元素定位':
+                    locate_column_index = i
+                    print(locate_column_index)
+                elif row_values[i]  == '测试数据':
+                    test_data_column_index = i
+                    print(test_data_column_index)
         except:
             logging.error('文件' + founction + '.xlsx' + '不存在')
+        for i in range(1,nrows+1):
+            logging.info('正在解析Excel：' + founction + '.xlsx用例：'+ case_name + '的第' + i + '行步骤...' )
+            
 
 
 
