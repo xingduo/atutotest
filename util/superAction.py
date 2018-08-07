@@ -19,7 +19,8 @@ class SuperAction:
 
     def __init__(self):
         self.page_dir = os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(__file__))))
-        print(self.page_dir)
+        # self.seleniumUtil =
+        # print(self.page_dir)
 
     # def excel(self):
 
@@ -44,33 +45,42 @@ class SuperAction:
         # 定义用例的路径
         file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
         # 打开Excel文件
-        try:
-            excel = xlrd.open_workbook(file_dir)
-            logging.info('打开' + founction + '.xlsx' + '文件')
-            # 获取用例名字
-            table = excel.sheet_by_name(case_name)
-            logging.info('获取用例' + case_name + '的名字')
-            # 获取单元格数量
-            ncols = table.ncols
-            nrows = table.nrows
-            row_values = table.row_values(0)
+        excel = xlrd.open_workbook(file_dir)
+        logging.info('打开' + founction + '.xlsx' + '文件')
+        # 获取用例名字
+        table = excel.sheet_by_name(case_name)
+        logging.info('获取用例' + case_name + '的名字')
+        # 获取单元格数量
+        ncols = table.ncols
+        nrows = table.nrows
+        print('行数：'+str(nrows))
+        row_values = table.row_values(0)
 
-            print(row_values)
-            for i in range(ncols):
-                if row_values[i] == '动作':
-                    action_column_index = i
-                    print(action_column_index)
-                elif row_values[i] == '元素定位':
-                    locate_column_index = i
-                    print(locate_column_index)
-                elif row_values[i]  == '测试数据':
-                    test_data_column_index = i
-                    print(test_data_column_index)
-        except:
-            logging.error('文件' + founction + '.xlsx' + '不存在')
-        for i in range(1,nrows+1):
-            logging.info('正在解析Excel：' + founction + '.xlsx用例：'+ case_name + '的第' + i + '行步骤...' )
-            
+        # print(row_values)
+        for i in range(ncols):
+            if row_values[i] == '动作':
+                action_column_index = i
+                # print(action_column_index)
+            elif row_values[i] == '元素定位':
+                locate_column_index = i
+                # print(locate_column_index)
+            elif row_values[i]  == '测试数据':
+                test_data_column_index = i
+                print(test_data_column_index)
+        for i in range(1,nrows):
+            logging.info('正在解析Excel：' + founction + '.xlsx用例：'+ case_name + '的第' + str(i) + '行步骤...' )
+            action = table.row_values(i,action_column_index)
+            print(action)
+            if action is not None:
+                if action == '打开链接':
+                    data = table.row_values(i,test_data_column_index)
+                    print(data)
+                elif action == '导航链接':
+                    data = table.row_values(i,test_data_column_index)
+                    print(data)
+
+
+
 
 
 
