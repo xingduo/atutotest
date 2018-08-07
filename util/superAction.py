@@ -16,6 +16,7 @@ class SuperAction:
     '''
     解析Excel表格，读取sheet等操作
     '''
+    # table = []
 
     def __init__(self):
         self.page_dir = os.path.dirname(os.path.abspath(os.path.dirname(os.path.abspath(__file__))))
@@ -39,11 +40,31 @@ class SuperAction:
                 print(element_locator)
 
 
-    def get_page_element_locator(self):
+    def get_page_element_locator(self,founction,case_name):
         '''
         :return:返回定位方式和定位值
         '''
+        # 定义用例的路径
+        file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
+        # 打开Excel文件
 
+        excel = xlrd.open_workbook(file_dir)
+        logging.info('打开' + founction + '.xlsx' + '文件')
+        # 获取用例名字
+        table = excel.sheet_by_name(case_name)
+        logging.info('获取用例' + case_name + '的名字')
+        # 获取单元格数量
+        ncols = table.ncols
+        nrows = table.nrows
+        # print('行数：'+str(nrows))
+        row_values = table.row_values(0)
+        for n in range(ncols):
+            if row_values[n] == '动作':
+                locate_column_index = n
+                print(locate_column_index)
+        for j in range(1,nrows):
+            locator = table.row_values(n,locate_column_index)
+            print(locator)
 
     def parse_excel(self,founction,case_name):
         '''
@@ -71,8 +92,8 @@ class SuperAction:
                 action_column_index = i
                 # print(action_column_index)
             elif row_values[i] == '元素定位':
-                locate_column_index = i
-                # print(locate_column_index)
+                self.locate_column_index = i
+                print(self.locate_column_index)
             elif row_values[i]  == '测试数据':
                 test_data_column_index = i
                 # print(test_data_column_index)
@@ -97,7 +118,7 @@ class SuperAction:
                 break
 
 if __name__ == '__main__':
-    s = SuperAction().parse_excel('test','Sheet1')
-    s1 = SuperAction().get_locate_way('Xpath','id')
+    s = SuperAction().get_page_element_locator('test','Sheet1')
+    # s1 = SuperAction().get_page_element_locator('Xpath','id')
+    # print(s)
     print(s)
-    print(s1)
