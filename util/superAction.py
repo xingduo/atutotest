@@ -12,6 +12,10 @@ import os
 from selenium.webdriver.common.by import By
 import logging
 import xlrd
+from selenium.webdriver.remote import webdriver
+from selenium.webdriver.remote.webdriver import WebDriver
+
+
 class SuperAction:
     '''
     解析Excel表格，读取sheet等操作
@@ -74,7 +78,11 @@ class SuperAction:
         # 定义用例的路径
         file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
         # 打开Excel文件
-
+        locate_by_way_value = 0
+        locate_by_way = 0
+        test_data_column_index = 0
+        action_column_index = 0
+        locate_column_index = 0
         excel = xlrd.open_workbook(file_dir)
         logging.info('打开' + founction + '.xlsx' + '文件')
         # 获取用例名字
@@ -85,18 +93,32 @@ class SuperAction:
         nrows = table.nrows
         # print('行数：'+str(nrows))
         row_values = table.row_values(0)
-
+        # for j in range(ncols):
         # print(row_values)
         for i in range(ncols):
             if row_values[i] == '动作':
                 action_column_index = i
                 # print(action_column_index)
             elif row_values[i] == '元素定位':
-                self.locate_column_index = i
-                print(self.locate_column_index)
+                locate_column_index = i
+                print(locate_column_index)
+            elif row_values[i] == '元素定位方式':
+                locate_by_way = i
+            elif row_values[i] == '元素定位值':
+                locate_by_way_value = i
             elif row_values[i]  == '测试数据':
                 test_data_column_index = i
                 # print(test_data_column_index)
+        for n in range(1,nrows):
+            locate_way = table.cell_value(n,locate_by_way)
+            locate_way_value = table.cell_value(n,locate_by_way_value)
+            print(locate_way)
+            find_by_id = WebDriver.find_element(locate_way,locate_way_value)
+            print(find_by_id)
+
+
+
+
         for k in range(1,nrows):
             logging.info('正在解析Excel：' + founction + '.xlsx用例：'+ case_name + '的第' + str(k) + '行步骤...' )
             print('正在解析Excel：' + founction + '.xlsx用例：'+ case_name + '的第' + str(k) + '行步骤...')
@@ -118,7 +140,8 @@ class SuperAction:
                 break
 
 if __name__ == '__main__':
-    s = SuperAction().get_page_element_locator('test','Sheet1')
+    # s = SuperAction().get_page_element_locator('test','Sheet1')
+    s = SuperAction().parse_excel('test','Sheet1')
     # s1 = SuperAction().get_page_element_locator('Xpath','id')
     # print(s)
     print(s)
