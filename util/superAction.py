@@ -52,25 +52,31 @@ class SuperAction:
         '''
         self.get_excel(founction,sheet_name)
         locator_split = []
-        element_locator_way = ''
-        element_locator_value = ''
+        element_locator_way_list = []
+        element_locator_value_list = []
 
         locator = self.table.row_values(row_index,colum_index) #获取元素定位的列的值
         locator_split = locator[0].split('.') #由于元素定位的方式为：page.case,所以需要将它分开
         # print(locator_split[1])
-        for i in range(self.nrows):
+        for i in range(1,self.nrows):
             '''
            根据行数循环 ,
            如果获取到的别名和指定的别名相同，
            就存储当前行的定位值和定位方式
            '''
-            # if self.table.row_values(i,colum_index)[0] == locator_split[1]:
             element_locator_way = self.table.row_values(i,4,5)
             element_locator_value = self.table.row_values(i,5,6)
-        return element_locator_way,element_locator_value
+            # print( element_locator_way, element_locator_value)
+            element_locator_way_list.append(element_locator_way)
+            element_locator_value_list.append(element_locator_value)
+        return element_locator_way_list,element_locator_value_list
 
-
-
+    def get_locate_way(self):
+        '''
+        @:param locateway 定位方式
+        @:param locatevalue 定位值
+        :return element_locator 定位的方式
+        '''
 
 
 
