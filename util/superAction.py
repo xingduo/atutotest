@@ -71,7 +71,7 @@ class SuperAction:
             element_locator_value_list.append(element_locator_value)
         return element_locator_way_list,element_locator_value_list
 
-    def get_locate_way(self):
+    def get_locate_way(self,element_locator_way_list,element_locator_value_list):
         '''
         @:param locateway 定位方式
         @:param locatevalue 定位值
