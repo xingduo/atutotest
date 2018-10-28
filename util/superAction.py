@@ -14,19 +14,18 @@ import logging
 import xlrd
 from selenium.webdriver.remote import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
-
+from util.seleniumUtil import SeleniumUtil
 
 class SuperAction:
     '''
     解析Excel表格，读取sheet等操作
     '''
 
-    # table = []
-
-    def __init__(self):
+    def __init__(self, founction, sheet_name):
         self.page_dir = os.path.dirname(
-            os.path.abspath(os.path.dirname(os.path.abspath(__file__))))  # self.seleniumUtil =  # print(self.page_dir)
-        # self.get_excel = self.get_excel() #实例化get_excel方法
+            os.path.abspath(os.path.dirname(os.path.abspath(__file__))))
+            # self.seleniumUtil =  # print(self.page_dir)
+        self.table,self.ncols,self.nrows = self.get_excel(founction, sheet_name)
 
     def get_excel(self, founction, sheet_name):
         '''
@@ -36,11 +35,11 @@ class SuperAction:
         # 定义用例的路径
         file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
         # 打开Excel文件
-        self.excel = xlrd.open_workbook(file_dir) #使用self主要是后面的方法中需要引用到
-        self.table = self.excel.sheet_by_name(sheet_name)  # 打开sheet文件
-        self.ncols = self.table.ncols  # 获取列数
-        self.nrows = self.table.nrows  # 获取行数
-        # return table,nrows,ncols
+        excel = xlrd.open_workbook(file_dir) #使用self主要是后面的方法中需要引用到
+        table = excel.sheet_by_name(sheet_name)  # 打开sheet文件
+        ncols = table.ncols  # 获取列数
+        nrows = table.nrows  # 获取行数
+        return table,ncols,nrows
 
     def get_page_element_locator(self, founction, sheet_name, row_index, colum_index):
         '''
@@ -56,7 +55,7 @@ class SuperAction:
         element_locator_value_list = []
 
         locator = self.table.row_values(row_index,colum_index) #获取元素定位的列的值
-        locator_split = locator[0].split('.') #由于元素定位的方式为：page.case,所以需要将它分开
+        # locator_split = locator[0].split('.') #由于元素定位的方式为：page.case,所以需要将它分开
         # print(locator_split[1])
         for i in range(1,self.nrows):
             '''
@@ -78,78 +77,53 @@ class SuperAction:
         :return element_locator 定位的方式
         '''
 
-
-
-    def parse_excel(self, founction, case_name):
+    def parse_excel(self):
         '''
         解析Excel用例
         :return:
         '''
+        row_value_list = []
+        all_rows_value_list = []
         # 定义用例的路径
-        file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
-        # 打开Excel文件
-        # locate_by_way_value = 0
-        # locate_by_way = 0
-        # test_data_column_index = 0
-        # action_column_index = 0
-        # locate_column_index = 0
-        excel = xlrd.open_workbook(file_dir)
-        logging.info('打开' + founction + '.xlsx' + '文件')
-        # 获取用例名字
-        table = excel.sheet_by_name(case_name)
-        logging.info('获取用例' + case_name + '的名字')
-        # 获取单元格数量
-        ncols = table.ncols
-        nrows = table.nrows
-        # print('行数：'+str(nrows))
-        row_values = table.row_values(0)
-        for i in range(ncols):
-            if row_values[i] == '动作':
-                action_column_index = i  # print(action_column_index)
-            elif row_values[i] == '元素定位':
-                locate_column_index = i  # print(locate_column_index)
-            elif row_values[i] == '元素定位方式':
-                locate_by_way = i
-            elif row_values[i] == '元素定位值':
-                locate_by_way_value = i
-                print('元素定位值' + str(locate_by_way_value))
-            elif row_values[i] == '测试数据':
-                test_data_column_index = i  # print(test_data_column_index)
-        # for n in range(1,nrows):
+        # file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
+        # excel = xlrd.open_workbook(file_dir)
+        # logging.info('打开' + founction + '.xlsx' + '文件')
+        # # 获取sheet表名字
+        # table = excel.sheet_by_name(case_name)
+        # logging.info('获取用例' + case_name + '的名字')
+        # # 获取列总数
+        # ncols = table.ncols
+        # # 获取行总数
+        # nrows = table.nrows
 
-        for k in range(1, nrows):
-            logging.info('正在解析Excel：' + founction + '.xlsx用例：' + case_name + '的第' + str(k) + '行步骤...')
-            print('正在解析Excel：' + founction + '.xlsx用例：' + case_name + '的第' + str(k) + '行步骤...')
-            action = table.cell_value(k, action_column_index)
-            locate_way = table.cell_value(k, locate_by_way)
-            print('locate_way' + locate_way)
-            locate_way_value = table.cell_value(k, locate_by_way_value)
-            print('locate_way_value' + locate_way_value)
-            # if locate_way == 'id':
+        for row in range(1, self.nrows):
+            # 列出每行所有的单元格的值
+            row_values = self.table.row_values(row,0,self.ncols)
 
-            # element = WebDriver.find_element(By.ID,locate_way_value)
-            # print(element)
-            # print(action)
-            if action:
-                if action == '打开链接':
-                    data = table.cell_value(k, test_data_column_index)
-                    print(data)
-                elif action == '导航链接':
-                    data = table.cell_value(k, test_data_column_index)
-                    print(data)
-                elif action == '输入':
-                    data = table.cell_value(k, test_data_column_index)
+            if row_values[2] == '打开链接':
+                test_data = self.table.cell_value(row,6)
+                SeleniumUtil.get(test_data)
+                # print(test_data)
+            if row_values[2] == '导航链接':
+                test_data = self.table.cell_value(row,6)
+                SeleniumUtil.get(test_data)
+            if row_values[2] == '输入':
+                ctype = self.table.cell(row,6).ctype
+                test_data = self.table.cell_value(row,6)
+                if ctype != 1:
+                    str(test_data)
+            # if row_values[2] == '':
+            # 未完待续
 
-                    print(data)
-            # 待续，还有很多情况需要补充
 
-            else:
-                break
+
+
+
+
+
 
 
 if __name__ == '__main__':
     # s = SuperAction().get_page_element_locator('test','Sheet1')
-    s = SuperAction().get_page_element_locator('test', 'Sheet1',2,3)
-    # s1 = SuperAction().get_page_element_locator('Xpath','id')
-    # print(s)
-    print(s)
+    # s = SuperAction().get_page_element_locator('test', 'Sheet1',2,3)
+    s = SuperAction('test','Sheet1').parse_excel()
