@@ -11,13 +11,14 @@
 import logging
 from Lib import platform
 from selenium import webdriver
-
+import configparser
 
 class SelectBrowser:
 
     '''
          选择浏览器，不同的系统有不同的常用的浏览器
     '''
+
 
     def get_browser(self,browser):
         '''

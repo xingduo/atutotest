@@ -8,7 +8,7 @@
 @file: seleniumUtil.py
 @time: 2018/8/3 23:35
 """
-
+from selenium import webdriver
 import logging
 from util.selectBrowser import SelectBrowser
 
@@ -17,6 +17,7 @@ class SeleniumUtil:
 
     def __init__(self, browser_name):
         self.driver = SelectBrowser.get_browser(browser_name)
+        # super(SeleniumUtil,self).__init__(chrome_options=chrome_options)
 
     def launch_browser(self, browser_name, url, time_out):
         # 获取浏览器

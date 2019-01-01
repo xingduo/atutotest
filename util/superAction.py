@@ -16,22 +16,23 @@ from selenium.webdriver.remote import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 from util.seleniumUtil import SeleniumUtil
 
-class SuperAction:
+class SuperAction(SeleniumUtil):
     '''
     解析Excel表格，读取sheet等操作
     '''
 
-    def __init__(self, founction, sheet_name):
+    def __init__(self, founction, sheet_name, browser_name=None):
         self.page_dir = os.path.dirname(
             os.path.abspath(os.path.dirname(os.path.abspath(__file__))))
-            # self.seleniumUtil =  # print(self.page_dir)
         self.table,self.ncols,self.nrows = self.get_excel(founction, sheet_name)
+        super(SuperAction, self).__init__(browser_name=browser_name)
 
     def get_excel(self, founction, sheet_name):
         '''
-        元素的定位方式
-        :return:
+         :param 元素的定位方式
+         :return
         '''
+
         # 定义用例的路径
         file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
         # 打开Excel文件
@@ -42,6 +43,7 @@ class SuperAction:
         return table,ncols,nrows
 
     def get_page_element_locator(self, founction, sheet_name, row_index, colum_index):
+        self.get_excel(founction,sheet_name)
         '''
         :param sheet 测试用例表中的sheet
         :param row_index 用例表中的行
@@ -49,14 +51,12 @@ class SuperAction:
         :param founction 页面名字
         :return:返回定位方式和定位值
         '''
-        self.get_excel(founction,sheet_name)
-        locator_split = []
         element_locator_way_list = []
         element_locator_value_list = []
 
-        locator = self.table.row_values(row_index,colum_index) #获取元素定位的列的值
-        # locator_split = locator[0].split('.') #由于元素定位的方式为：page.case,所以需要将它分开
-        # print(locator_split[1])
+        # 获取元素定位的列的值
+        locator = self.table.row_values(row_index,colum_index)
+
         for i in range(1,self.nrows):
             '''
            根据行数循环 ,
@@ -84,29 +84,17 @@ class SuperAction:
         '''
         row_value_list = []
         all_rows_value_list = []
-        # 定义用例的路径
-        # file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
-        # excel = xlrd.open_workbook(file_dir)
-        # logging.info('打开' + founction + '.xlsx' + '文件')
-        # # 获取sheet表名字
-        # table = excel.sheet_by_name(case_name)
-        # logging.info('获取用例' + case_name + '的名字')
-        # # 获取列总数
-        # ncols = table.ncols
-        # # 获取行总数
-        # nrows = table.nrows
 
         for row in range(1, self.nrows):
             # 列出每行所有的单元格的值
             row_values = self.table.row_values(row,0,self.ncols)
-
             if row_values[2] == '打开链接':
                 test_data = self.table.cell_value(row,6)
-                SeleniumUtil.get(test_data)
+                SeleniumUtil.get(self, url=test_data)
                 # print(test_data)
             if row_values[2] == '导航链接':
                 test_data = self.table.cell_value(row,6)
-                SeleniumUtil.get(test_data)
+                SeleniumUtil.get(self, url=test_data)
             if row_values[2] == '输入':
                 ctype = self.table.cell(row,6).ctype
                 test_data = self.table.cell_value(row,6)
@@ -114,13 +102,6 @@ class SuperAction:
                     str(test_data)
             # if row_values[2] == '':
             # 未完待续
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':
