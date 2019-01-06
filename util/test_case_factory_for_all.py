@@ -9,7 +9,7 @@
 @time: 2018/11/13 23:45
 """
 import os
-
+import sys
 import openpyxl
 
 
@@ -45,23 +45,29 @@ class TestCaseFactoryForAll:
 			print(sheet_name)
 		return sheet_name
 	
-	def create_testcase(self, case_name):
-		text = '#!/usr/bin/python\n# coding:utf-8\n' \
-		       'class '+case_name.capitalize()+':\n'
-
+	def create_testcase(self, case_name, sheet_name):
+		class_name_text = '#!/usr/bin/python\n# coding:utf-8\n' \
+		                  'import unittest\n' \
+		                  'from util.superAction import SuperAction\n' \
+		                  'from util.seleniumUtil import SeleniumUtil\n' \
+		                  'class ' + case_name.capitalize() + '(unittest.TestCase)'':\n'
+		def_name = '    def ' + sheet_name + '(self):\n'
+		case_method = '        SuperAction.parse_excel('+'\''+case_name+'\','+'\''+sheet_name+'\''','+'SeleniumUtil)'
+		
+		
 		create_file_path = os.path.join(os.path.dirname(os.getcwd()) + '\\testcase')
 		suffix = case_name + '.py'
 		full_case_path = os.path.join(create_file_path, suffix)
 		if not os.path.exists(full_case_path):
-			os.mkdir(create_file_path)
-			# if not os.path.exists(full_case_path):
-			# 	os.mkdir(full_case_path)
+			os.mkdir(create_file_path)  # if not os.path.exists(full_case_path):  # 	os.mkdir(full_case_path)
 		with open(full_case_path, 'w') as fb:
 			# 这里应该不能这样写，open（）打开的是文件夹，而不是文件
-			fb.write(text)
+			fb.write(class_name_text)
+			fb.write(def_name)
+			fb.write(case_method)
 			fb.close()
 
 
 if __name__ == '__main__':
 	f = TestCaseFactoryForAll()
-	f.create_testcase("login")
+	f.create_testcase("Login", "login")
