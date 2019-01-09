@@ -7,7 +7,9 @@ import HTMLTestRunner
 from selenium import webdriver
 class Login(unittest.TestCase):
     def __init__(self,browser_name):
+        super(Login,self).__init__()
         self.browser_name = browser_name
         self.driver = SeleniumUtil(self.browser_name)
+        self.superAction = SuperAction()
     def test_login(self):
-        SuperAction.parse_excel('Login','test_login',SeleniumUtil)
+        self.superAction.parse_excel('Login','test_login',SeleniumUtil)

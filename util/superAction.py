@@ -16,7 +16,7 @@ from selenium.webdriver.remote import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 from util.seleniumUtil import SeleniumUtil
 
-class SuperAction(SeleniumUtil):
+class SuperAction:
     '''
     解析Excel表格，读取sheet等操作
     '''
@@ -77,7 +77,7 @@ class SuperAction(SeleniumUtil):
         :return element_locator 定位的方式
         '''
 
-    def parse_excel(self):
+    def parse_excel(self,*args):
         '''
         解析Excel用例
         :return:
