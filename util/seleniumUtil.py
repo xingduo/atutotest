@@ -23,7 +23,7 @@ class SeleniumUtil:
         # 获取浏览器
         try:
             # window界面最大化
-            self.maxWindow(browser_name)
+            self.max_window(browser_name)
             # 等待页面加载
             self.waite_for_page_loading(time_out)
             # 获取url

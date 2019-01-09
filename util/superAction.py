@@ -82,9 +82,6 @@ class SuperAction(SeleniumUtil):
         解析Excel用例
         :return:
         '''
-        row_value_list = []
-        all_rows_value_list = []
-
         for row in range(1, self.nrows):
             # 列出每行所有的单元格的值
             row_values = self.table.row_values(row,0,self.ncols)
