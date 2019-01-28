@@ -17,14 +17,15 @@ class TestCaseFactoryForAll:
 	'''
 	生成自动化测试用例工具
 	'''
+	
 	def __init__(self):
 		self.case_names = self.get_case_name()
 		self.sheet_names = self.get_sheet_name()
-		self.create_testcase(self.case_names,self.sheet_names)
+		self.create_testcase(self.case_names, self.sheet_names)
 	
 	def get_case_name(self):
-
-		case_names=[]
+		
+		case_names = []
 		global case_full_name
 		case_path = os.path.join(os.path.dirname(os.getcwd()) + '\case\\')
 		# 获取case文件夹下的所有用例文件
@@ -46,41 +47,45 @@ class TestCaseFactoryForAll:
 		for wb in case_list:
 			f_path = os.path.join(case_path + '\\' + wb)
 			fb = openpyxl.load_workbook(f_path)
-			sheet_names = fb.sheetnames
-			# sheet_names.append(sheet_name)
+			sheet_names = fb.sheetnames  # sheet_names.append(sheet_name)
 		return sheet_names
 	
 	def create_testcase(self, case_names, sheet_names):
 		for case_name in case_names:
+			class_name_text = '#!/usr/bin/python\n# coding:utf-8\n' \
+			                  'import unittest\n' \
+			                  'from util.superAction import SuperAction\n' \
+			                  'from util.seleniumUtil import SeleniumUtil\n' \
+			                  'import HTMLTestRunner\n' \
+			                  'from selenium import webdriver\n' \
+			                  'class ' + case_name.capitalize() + '(unittest.TestCase)'':\n'
+			def_init = '    def __init__(self,browser_name):\n' \
+			           '        super(' + case_name.capitalize() + ',self).__init__()\n' \
+			                                                       '        self.browser_name = browser_name\n' \
+			                                                       '        self.driver = SeleniumUtil(self.browser_name)\n' \
+			                                                       '        self.superAction = SuperAction()\n'
+			create_file_path = os.path.join(os.path.dirname(os.getcwd()) + '\\testcase')
+			suffix = case_name + '.py'
+			full_case_path = os.path.join(create_file_path, suffix)
+			with open(full_case_path, 'w') as fb:
+				fb.write(class_name_text)
+				fb.write(def_init)
+				fb.close()
 			for sheet_name in sheet_names:
 				print(sheet_name)
-				class_name_text = '#!/usr/bin/python\n# coding:utf-8\n' \
-				                  'import unittest\n' \
-				                  'from util.superAction import SuperAction\n' \
-				                  'from util.seleniumUtil import SeleniumUtil\n' \
-								  'import HTMLTestRunner\n' \
-								  'from selenium import webdriver\n' \
-				                  'class ' + case_name.capitalize() + '(unittest.TestCase)'':\n'
-				def_init = '    def __init__(self,browser_name):\n' \
-		                   '        super('+case_name.capitalize()+',self).__init__()\n' \
-						   '        self.browser_name = browser_name\n' \
-						   '        self.driver = SeleniumUtil(self.browser_name)\n' \
-		                   '        self.superAction = SuperAction()\n'
 				def_name = '    def ' + sheet_name + '(self):\n'
-				case_method = '        self.superAction.parse_excel('+'\''+case_name+'\','+'\''+sheet_name +'\''','+'SeleniumUtil)'
-				create_file_path = os.path.join(os.path.dirname(os.getcwd()) + '\\testcase')
-				suffix = case_name + '.py'
-				full_case_path = os.path.join(create_file_path, suffix)
+				case_method = '        self.superAction.parse_excel(' + '\'' + case_name + '\',' + '\'' + sheet_name + '\''',' + 'SeleniumUtil)\n'
+
 				# if not os.path.exists(full_case_path):
 				# 	os.mkdir(create_file_path)
-				with open(full_case_path, 'w') as fb:
-					fb.write(class_name_text)
-					fb.write(def_init)
-					fb.write(def_name)
-					fb.write(case_method)
-					fb.close()
+				full_case_path = os.path.join(create_file_path, suffix)
+				with open(full_case_path, 'a') as f:
+					f.write(def_name)
+					f.write(case_method)
+					f.close()
+
 
 if __name__ == '__main__':
 	f = TestCaseFactoryForAll()
-	f.create_testcase()
-
+	
+	f.create_testcase(f.case_names, f.sheet_names)
