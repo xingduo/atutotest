@@ -33,16 +33,18 @@ class SuperAction:
         self.tables = self.data.sheets()
         self.rows = self.table.nrows
         self.cols = self.table.ncols
-    # def parse_excel(self):
-    #     for table in range(self.tables):
-    #         for row in range(1,self.rows):
-    #             action_value = table.cell_value(row,2)
-    #             ele = table.cell_value(row,3)
-    #             ele_locate_way = table.cell_value(row,4)
-    #             ele_locate_value = table.cell_value(row,5)
-    #             test_data = table.cell_value(row,6)
-    #             if action_value == '打开浏览器':
-    #
+        
+    def parse_excel(self,SeleniumUtil):
+        for table in range(self.tables):
+            for row in range(1,self.rows):
+                action_value = table.cell_value(row,2)
+                ele = table.cell_value(row,3)
+                ele_locate_way = table.cell_value(row,4)
+                ele_locate_value = table.cell_value(row,5)
+                test_data = table.cell_value(row,6)
+                if action_value == '打开浏览器':
+                    SeleniumUtil.launch_browser()
+
 
     def get_page_element_locator(self, founction, sheet_name, row_index, colum_index):
         '''
