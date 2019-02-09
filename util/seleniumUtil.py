@@ -8,26 +8,29 @@
 @file: seleniumUtil.py
 @time: 2018/8/3 23:35
 """
-from selenium import webdriver
+# from selenium import webdriver
+from selenium.webdriver.support.ui import Select
 import logging
 from util.selectBrowser import SelectBrowser
+from util.config import Config
 
 
 class SeleniumUtil:
 
-    def __init__(self, browser_name):
-        self.driver = SelectBrowser.get_browser(browser_name)
+    def __init__(self):
+        self.config = Config()
+        self.driver = SelectBrowser().get_browser()
         # super(SeleniumUtil,self).__init__(chrome_options=chrome_options)
 
-    def launch_browser(self, browser_name, url, time_out):
+    def launch_browser(self, browser_name):
         # 获取浏览器
         try:
             # window界面最大化
             self.max_window(browser_name)
             # 等待页面加载
-            self.waite_for_page_loading(time_out)
+            # self.waite_for_page_loading(time_out)
             # 获取url
-            self.get(url)
+            # self.get(url)
         except Exception:
             logging.warning('注意：页面没有完全加载出来，刷新重试！！')
             # 刷新页面
@@ -48,6 +51,20 @@ class SeleniumUtil:
     def refesh(self):
         logging.info('刷新！')
         self.driver.refresh()
+
+    def input(self,ele,key):
+        self.driver.find_element(ele).send_keys(key)
+
+    def click(self,ele):
+        self.driver.find_element(ele).click()
+
+    def selectByValue(self,ele,value):
+        s = Select(self.driver.find_element(ele))
+        s.select_by_value(value)
+
+    def selectByIndex(self,ele,index):
+        s = Select(self.driver.find_element(ele))
+        s.select_by_index(index)
 
 
 

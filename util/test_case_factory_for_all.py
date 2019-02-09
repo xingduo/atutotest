@@ -59,11 +59,10 @@ class TestCaseFactoryForAll:
 			                  'import HTMLTestRunner\n' \
 			                  'from selenium import webdriver\n' \
 			                  'class ' + case_name.capitalize() + '(unittest.TestCase)'':\n'
-			def_init = '    def __init__(self,browser_name):\n' \
+			def_init = '    def setUp(self):\n' \
 			           '        super(' + case_name.capitalize() + ',self).__init__()\n' \
-			                                                       '        self.browser_name = browser_name\n' \
-			                                                       '        self.driver = SeleniumUtil(self.browser_name)\n' \
-			                                                       '        self.superAction = SuperAction()\n'
+			                                                       '        self.driver = SeleniumUtil()\n' \
+			                                                       '        self.superAction = SuperAction(case_name="'+case_name+'")\n'
 			create_file_path = os.path.join(os.path.dirname(os.getcwd()) + '\\testcase')
 			suffix = case_name + '.py'
 			full_case_path = os.path.join(create_file_path, suffix)
@@ -74,7 +73,7 @@ class TestCaseFactoryForAll:
 			for sheet_name in sheet_names:
 				print(sheet_name)
 				def_name = '    def ' + sheet_name + '(self):\n'
-				case_method = '        self.superAction.parse_excel(' + '\'' + case_name + '\',' + '\'' + sheet_name + '\''',' + 'SeleniumUtil)\n'
+				case_method = '        self.superAction.parse_excel(SeleniumUtil)\n'
 
 				# if not os.path.exists(full_case_path):
 				# 	os.mkdir(create_file_path)

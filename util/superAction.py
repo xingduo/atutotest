@@ -18,24 +18,24 @@ import xlutils
 from selenium.webdriver.remote.webdriver import WebDriver
 from util.seleniumUtil import SeleniumUtil
 from util.selectBrowser import SelectBrowser
+from util.config import Config
 
 class SuperAction:
     '''
     解析Excel表格，读取sheet等操作
     '''
-    def __init__(self, founction, sheet_name,index = None, browser_name=None):
+    def __init__(self, case_name=None):
         self.page_dir = os.path.dirname(
             os.path.abspath(os.path.dirname(os.path.abspath(__file__))))
-        super(SuperAction, self).__init__(browser_name=browser_name)
-        self.driver = SelectBrowser.get_browser(browser_name)
-        self.file_dir = self.page_dir + '\case\\' + founction + '.xlsx'
-        self.data = xlrd.dopen_workbook(self.file_dir)
-        self.tables = self.data.sheets()
-        self.rows = self.table.nrows
-        self.cols = self.table.ncols
-        
+        # super(SuperAction, self).__init__(browser_name=Config())
+        self.browser_name = Config()
+        self.driver = SelectBrowser().get_browser()
+        self.tables = self.get_table(case_name)
+        self.rows = self.get_rows()
+        self.cols = self.get_cols()
+
     def parse_excel(self,SeleniumUtil):
-        for table in range(self.tables):
+        for table in self.tables:
             for row in range(1,self.rows):
                 action_value = table.cell_value(row,2)
                 ele = table.cell_value(row,3)
@@ -43,35 +43,34 @@ class SuperAction:
                 ele_locate_value = table.cell_value(row,5)
                 test_data = table.cell_value(row,6)
                 if action_value == '打开浏览器':
-                    SeleniumUtil.launch_browser()
+                    SeleniumUtil.launch_browser(self.browser_name)
+                if action_value == '输入URL':
+                    SeleniumUtil.get(ele_locate_value)
+                if action_value == '输入':
+                    SeleniumUtil.input(ele_locate_way,ele_locate_value)
+                if action_value == '点击':
+                    SeleniumUtil.click(self.get_locate_way(ele_locate_way,ele_locate_value))
 
+    def get_table(self,case_name):
+        file_dir = self.page_dir + '\case\\' + case_name + '.xlsx'
+        data = xlrd.open_workbook(file_dir)
+        tables = data.sheets()
+        return tables
 
-    def get_page_element_locator(self, founction, sheet_name, row_index, colum_index):
-        '''
-        :param sheet 测试用例表中的sheet
-        :param row_index 用例表中的行
-        :param colum_index 用例表中的列
-        :param founction 页面名字
-        :return:返回定位方式和定位值
-        '''
-        element_locator_way_list = []
-        element_locator_value_list = []
+    def get_rows(self):
+        # file_dir = self.page_dir + '\case\\' + case_name + '.xlsx'
+        # data = xlrd.open_workbook(file_dir)
+        # tables = data.sheets()
+        # tables = self.get_table(c)
+        for table in self.tables:
+            rows = table.nrows
+        return rows
 
-        # 获取元素定位的列的值
-        locator = self.table.row_values(row_index,colum_index)
+    def get_cols(self):
+        for table in self.tables:
+            cols = table.nrows
+        return cols
 
-        for i in range(1,self.nrows):
-            '''
-           根据行数循环 ,
-           如果获取到的别名和指定的别名相同，
-           就存储当前行的定位值和定位方式
-           '''
-            element_locator_way = self.table.row_values(i,4,5)
-            element_locator_value = self.table.row_values(i,5,6)
-            # print( element_locator_way, element_locator_value)
-            element_locator_way_list.append(element_locator_way)
-            element_locator_value_list.append(element_locator_value)
-        return element_locator_way_list,element_locator_value_list
 
     def get_locate_way(self,locate_way, locate_value):
         '''
@@ -79,7 +78,7 @@ class SuperAction:
         @:param locatevalue 定位值
         :return element_locator 定位的方式
         '''
-        
+
         if locate_way == By.ID.lower():
             elementLocator = self.driver.find_element_by_id(locate_value)
         elif locate_way == By.CLASS_NAME.lower():
@@ -99,7 +98,7 @@ class SuperAction:
         else:
             logging.error("你选择的定位方式：["+locate_way+"] 不被支持!")
         return elementLocator
-         
+
 
 if __name__ == '__main__':
     s = SuperAction().get_page_element_locator('test','Sheet1')
