@@ -52,11 +52,11 @@ class SeleniumUtil:
         logging.info('刷新！')
         self.driver.refresh()
 
-    def input(self,ele,key):
-        self.driver.find_element(ele).send_keys(key)
+    def input(self,ele,ele_value,key):
+        self.driver.find_element(ele,ele_value).send_keys(key)
 
-    def click(self,ele):
-        self.driver.find_element(ele).click()
+    def click(self,ele,value = None):
+        self.driver.find_element(ele,value).click()
 
     def selectByValue(self,ele,value):
         s = Select(self.driver.find_element(ele))
