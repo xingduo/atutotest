@@ -54,7 +54,7 @@ class SuperAction:
                 if action_value == '输入':
                     self.selenuimUtil.input(self.get_locate_way(ele_locate_way),ele_locate_value,test_data)
                 if action_value == '点击':
-                    self.selenuimUtil.click(self.get_locate_way(ele_locate_way))
+                    self.selenuimUtil.click(self.get_locate_way(ele_locate_way),ele_locate_way)
 
     def get_table(self,case_name):
         file_dir = self.page_dir + '\case\\' + case_name + '.xlsx'

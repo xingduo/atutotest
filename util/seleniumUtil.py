@@ -56,6 +56,7 @@ class SeleniumUtil:
         self.driver.find_element(ele,ele_value).send_keys(key)
 
     def click(self,ele,value = None):
+        # ele = ele.upper()
         self.driver.find_element(ele,value).click()
 
     def selectByValue(self,ele,value):
